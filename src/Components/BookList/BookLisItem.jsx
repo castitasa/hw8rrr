@@ -1,36 +1,24 @@
-import { useEffect } from 'react';
+import React from 'react';
 import classes from './BookList.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import fetchAllBooks from '../../store/reducer/BookListCreated';
-import BookLisItem from './BookLisItem';
-import { fetchToAddItem } from '../../store/reducer/CartCreated';
+import {Button} from 'react-bootstrap';
 
-const BookList = () => {
+const BookLisItem = ({ book, onAddToCart }) => {
+    const { id, title, author, price, imgUrl } = book;
 
-    const dispatch = useDispatch();
+    const handleOnAddToCart = () => onAddToCart(id);
 
-    const { books, booksError, bookListStatus } = useSelector((state) => state.bookList);
+    return (<li className={classes.list_item}>
+        <div className={classes.list_item_cover}>
+            <img src={imgUrl} alt={`book-${title}`} />
+        </div>
 
-    const onAddToCart = (id) => dispatch(fetchToAddItem(id));
-
-    useEffect(() => {
-        dispatch(fetchAllBooks());
-    }, []);
-
-    const cases = {
-        pending: 'loading...',
-        // fulfilled: <BookLisItem books={books} anAddToCart={(id) => console.log('hello', id)} />,
-        fulfilled: books.map((book) =>( <BookLisItem key={`book-${book.id}`} book={book} onAddToCart={onAddToCart} />)),
-        rejected: booksError,
-    }
-
-    console.log(cases['pending']);
-
-    return (
-        <ul>
-            {cases[bookListStatus]}
-        </ul>
-    );
+        <div className={classes.list_item_detail}>
+            <h4>{title}</h4>
+            <div>{author}</div>
+            <div className={classes.list_item_price}>{price}$</div>
+            <Button onClick={handleOnAddToCart}>Add to cart</Button>
+        </div>
+    </li>);
 }
 
-export default BookList;
+export default BookLisItem;
